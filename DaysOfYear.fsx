@@ -37,9 +37,9 @@ let daysOfYearInJapaneseCalendar =
             let [d; nd] = [era, year; next] |> List.map ((<||) getGregorianFirstDateTime)
             (nd - d).Days)
 
-printfn "西暦1900年～2012年の日数"
+printfn "1900 - 2012"
 [for year in 1900 .. 2012 -> year, daysOfYear year] |> List.iter (printfn "%A")
-printfn "明治元年～平成24年の日数"
+printfn "Meiji 1 - Heisei 24"
 [for era in Era.All do
  for year in era.MinYear .. (if era = Heisei then 24 else era.MaxYear) ->
     era, year, daysOfYearInJapaneseCalendar era year]
