@@ -39,7 +39,6 @@ type PrisonerWareingHat(prisonerCount) =
 /// 指定された解答候補が解答として適切かどうかを判定する。
 /// prisonerCount : 囚人の人数
 /// tell : 問題の解答候補となる関数。関数の引数は順に、囚人の人数、今の囚人から見える帽子のリスト、今までに囚人が答えた帽子のリスト。戻り値は今の囚人が答える帽子。
-/// 戻り値 : 問題の解答候補が解答として正しければtrue
 let judge prisonerCount (tell : int -> Hat list -> Hat list -> Hat) =
     if prisonerCount < 2 then invalidArg "prisonerCount" "囚人の人数には2以上を指定してください"
     let play() =
