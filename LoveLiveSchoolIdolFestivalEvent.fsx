@@ -1,8 +1,6 @@
-﻿/// 目標ポイント(イベントの目玉景品がもらえるptなどを設定)
-let targetPoint = 8000
-///　イベント曲をプレイするごとにもらえるpt。
+﻿///　イベント曲をプレイするごとにもらえるpt。
 /// 今までのところ、Hardだと最高233pt、1ミスで227ptなので、そのあたりに設定します。
-let gotPointByEvent = 200
+let gotPointByEvent = 227
 /// イベント曲を1回プレイするために必要なマーク(マカロンなど)。Hard前提。
 let requiredMark = 45
 /// 1曲プレイするのにかかる平均時間(分)
@@ -23,28 +21,33 @@ let hardSong = { RequiredLP = 15; MarkCount = 16 }
 let specialSong = { RequiredLP = 25; MarkCount = 27 }
 
 type Result = {
-    /// イベント曲以外の曲をプレイする必要がある回数
+    /// イベント曲以外の曲をプレイする必要がある回数。
     Count : int
-    /// イベント曲以外の曲を必要な回数プレイした場合に蓄積されているマーク(マカロンなど)の数
+    /// イベント曲以外の曲を必要な回数プレイした場合に蓄積されているマーク(マカロンなど)の数。
     Marks : int
-    /// イベント曲以外の曲を必要な回数プレイした場合に蓄積されているpt数
+    /// イベント曲以外の曲を必要な回数プレイした場合に蓄積されているpt数。
     Points : int
     /// イベント曲以外の曲を必要な回数プレイした場合にかかる時間(分)。LP回復の待ち時間も含めます。
     Minutes : float
-    /// イベント曲以外の曲を必要な回数プレイした場合に消費するラブカストーンの数。休憩なしの前提。
+    /// イベント曲以外の曲を休憩なしで必要な回数プレイした場合に消費するラブカストーンの数。
     Stones : int
-    /// イベント曲のプレイ回数も含めた、プレイする必要がある回数
+    /// イベント曲をプレイする必要がある回数。
+    EventCount : int
+    /// イベント曲を必要な回数プレイした場合にかかる時間(分)。
+    EventMinutes : float
+    /// イベント曲のプレイ回数も含めた、プレイする必要がある回数。
     TotalCount : int
-    /// イベント曲のプレイ時間も含めた、目標pt到達までにかかる時間(分)
+    /// イベント曲のプレイ時間も含めた、目標pt到達までにかかる時間(分)。
     TotalMinutes : float
 }
 
 /// イベントにて目標ptに到達するまでのデータを計算します。
+/// targetPoint : イベントで目標とするpt数(目玉景品がもらえるptなどに設定する)。
 /// maxLP : 最大LP。
 /// mark : 現在既に獲得しているマーク(マカロンなど)の数。
 /// point : 現在既に獲得しているpt数。
 /// songs : プレイする曲目のリスト。リスト順に曲をプレイした後、ラブカストーンを消費してLP回復する前提。リストの途中でLP不足になる場合は、次の曲のプレイに必要な分のLPの自然回復時間も計算に含めます。
-let calcEvent maxLP mark point songs =
+let calcEvent targetPoint maxLP mark point songs =
     let songs = songs |> Seq.sortBy (fun { MarkCount = m } -> -m) |> Seq.toArray
     let requiredLP = songs |> Array.sumBy (fun { RequiredLP = r } -> r)
     let timePer1Song = (float songs.Length * minutesForSong + float (max 0 (requiredLP - maxLP)) * minutesForLP) / float songs.Length
@@ -61,7 +64,9 @@ let calcEvent maxLP mark point songs =
         Marks = marks
         Points = points
         Minutes = minutes
-        Stones =  count / songs.Length
+        Stones =  (count - 1) / songs.Length
+        EventCount = eventCount
+        EventMinutes = eventMinutes
         TotalCount = count + eventCount
         TotalMinutes = minutes + eventMinutes
     }
