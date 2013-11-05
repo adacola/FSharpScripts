@@ -27,3 +27,5 @@ let main() =
     match tryFind cageCount maxLionCount counts with
     | Some result -> result |> Seq.map string |> String.concat " " |> printfn "%s"
     | None -> printfn "%d" -1
+
+main()

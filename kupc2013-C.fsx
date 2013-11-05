@@ -46,3 +46,5 @@ let main() =
         for j in 0 .. columnLength - 1 do chocolates.[j].[i] <- input.[j]
     let result = calc chocolates
     printfn "%d" result
+
+main()
